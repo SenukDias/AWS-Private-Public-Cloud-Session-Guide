@@ -1,85 +1,112 @@
-# AWS Private & Public Cloud Session Guide: Define Your Space
+# Define Your Private Public AWS Space
 
-This repository provides a comprehensive guide and automation script for deploying a bifurcated AWS VPC architecture. This setup is a foundational pattern for secure cloud environments, separating public-facing resources from private, isolated backend systems.
+## High-Level Overview
+A bifurcated network architecture separates infrastructure into **Public** and **Private** subnets to enhance security. 
+- **Public Subnet**: Contains resources that require direct access to the internet, such as web servers, NAT gateways, or load balancers. These subnets have a route to an Internet Gateway (IGW).
+- **Private Subnet**: Contains backend resources that should not be directly accessible from the internet, such as databases or application servers. These subnets do not have a route to an IGW. They rely on Bastion Hosts (Jump Nodes) in the public subnet for inbound SSH access, or NAT Gateways for outbound internet connectivity.
 
-## Architecture Overview
+## GUI Deployment Guide: VPC & Networking
 
-A **Bifurcated Network Architecture** divides a Virtual Private Cloud (VPC) into two distinct zones:
-
-1.  **Public Subnet:**
-    *   **Internet Access:** Has a direct route to an Internet Gateway (IGW).
-    *   **Purpose:** Hosts "Front-end" or "Edge" services (e.g., Web Servers, Load Balancers, Jump Hosts).
-    *   **Visibility:** Reachable from the public internet if security groups allow.
-
-2.  **Private Subnet:**
-    *   **Internet Access:** No direct route to the Internet Gateway. Outbound access usually requires a NAT Gateway (not included in this basic lab) or stays completely isolated.
-    *   **Purpose:** Hosts "Back-end" services (e.g., Databases, Internal APIs, Legacy Systems).
-    *   **Visibility:** Only reachable from within the VPC (e.g., from the Public Subnet).
-
----
-
-## GUI Deployment Instructions (Step-by-Step)
+Follow these steps to deploy the VPC architecture via the AWS Management Console:
 
 ### 1. Create the VPC
-1.  Navigate to the **VPC Dashboard** in the AWS Console.
-2.  Click **Create VPC**.
-3.  Select **VPC only**.
-4.  **Name tag:** `Session-VPC`
-5.  **IPv4 CIDR block:** `10.0.0.0/16`
-6.  Click **Create VPC**.
+1. Navigate to the **VPC Dashboard**.
+2. Click **Create VPC**.
+3. Select **VPC only**.
+4. **Name tag**: `my-bifurcated-vpc`.
+5. **IPv4 CIDR block**: `10.0.0.0/16`.
+6. Click **Create VPC**.
 
 ### 2. Create Subnets
-1.  Go to **Subnets** > **Create subnet**.
-2.  Select `Session-VPC`.
-3.  **Public Subnet:**
-    *   **Name:** `Public-Subnet`
-    *   **Availability Zone:** Select any (e.g., `us-east-1a`).
-    *   **IPv4 CIDR:** `10.0.1.0/24`.
-4.  **Private Subnet:**
-    *   **Name:** `Private-Subnet`
-    *   **Availability Zone:** Same as above.
-    *   **IPv4 CIDR:** `10.0.2.0/24`.
-5.  Click **Create subnet**.
+1. Go to **Subnets** > **Create subnet**.
+2. Select your VPC: `my-bifurcated-vpc`.
+3. **Configure Public Subnet**:
+   - **Name**: `public-subnet-1`
+   - **Availability Zone**: Choose one (e.g., `us-east-1a`)
+   - **IPv4 CIDR block**: `10.0.1.0/24`
+4. Click **Add new subnet** to configure the private subnet in the same window:
+   - **Name**: `private-subnet-1`
+   - **Availability Zone**: Choose the same zone (e.g., `us-east-1a`)
+   - **IPv4 CIDR block**: `10.0.2.0/24`
+5. Click **Create subnet**.
 
-### 3. Setup Connectivity (IGW & Route Tables)
-1.  **Internet Gateway:**
-    *   Go to **Internet Gateways** > **Create internet gateway**. Name it `Session-IGW`.
-    *   Select the new IGW > **Actions** > **Attach to VPC** > Select `Session-VPC`.
-2.  **Public Route Table:**
-    *   Go to **Route Tables** > **Create route table**. Name it `Public-RT`. Select `Session-VPC`.
-    *   Select `Public-RT` > **Routes** > **Edit routes**.
-    *   Add route: `0.0.0.0/0` -> Target: `Internet Gateway` (`Session-IGW`).
-    *   Go to **Subnet associations** > **Edit subnet associations** > Select `Public-Subnet`.
-3.  **Private Route Table:**
-    *   Create `Private-RT`. Select `Session-VPC`.
-    *   Go to **Subnet associations** > Select `Private-Subnet`. (Leave routes local-only).
+### 3. Create and Attach Internet Gateway (IGW)
+1. Go to **Internet Gateways** > **Create internet gateway**.
+2. **Name tag**: `my-igw`.
+3. Click **Create internet gateway**.
+4. Select the newly created IGW, click **Actions** > **Attach to VPC**, select `my-bifurcated-vpc`, and attach.
+
+### 4. Configure Route Tables
+By default, your VPC comes with a main route table. This will serve as your **Private Route Table** because it has no internet route.
+
+1. **Create Public Route Table**:
+   - Go to **Route Tables** > **Create route table**.
+   - **Name**: `public-route-table`.
+   - **VPC**: `my-bifurcated-vpc`.
+   - Click **Create route table**.
+2. **Add Internet Route**:
+   - Select `public-route-table`, go to the **Routes** tab, and click **Edit routes**.
+   - Click **Add route**: Destination `0.0.0.0/0`, Target `Internet Gateway` > select `my-igw`.
+   - Save changes.
+3. **Associate Public Subnet**:
+   - Go to the **Subnet associations** tab of `public-route-table`.
+   - Click **Edit subnet associations**, select `public-subnet-1`, and save.
+*(The `private-subnet-1` remains implicitly associated with the main/private route table).*
 
 ---
 
 ## Deploying EC2 Nodes
 
-### Public Web Node
-1.  **Launch Instance:** Name it `Web-Node`.
-2.  **AMI:** Amazon Linux 2023.
-3.  **Network:** Select `Session-VPC` and `Public-Subnet`.
-4.  **Auto-assign Public IP:** Enable.
-5.  **Security Group:** Allow SSH (22) and HTTP (80) from `0.0.0.0/0`.
+### 1. Deploy Public EC2 Web Node (Jump Node)
+1. Go to the **EC2 Dashboard** > **Launch Instance**.
+2. **Name**: `public-web-node`.
+3. **AMI**: Amazon Linux 2023.
+4. **Instance Type**: `t2.micro`.
+5. **Key pair**: Create a new key pair (e.g., `my-aws-key`) or select an existing one. Download the `.pem` file.
+6. **Network settings**:
+   - **VPC**: `my-bifurcated-vpc`.
+   - **Subnet**: `public-subnet-1`.
+   - **Auto-assign public IP**: **Enable**.
+   - **Firewall (Security Groups)**: Create new. Allow SSH (Port 22) and HTTP (Port 80) from Anywhere (0.0.0.0/0).
+7. Click **Launch instance**.
 
-### Private Database Node
-1.  **Launch Instance:** Name it `DB-Node`.
-2.  **Network:** Select `Session-VPC` and `Private-Subnet`.
-3.  **Auto-assign Public IP:** Disable.
-4.  **Security Group:** Allow SSH (22) and Database ports (e.g., 3306) **ONLY** from the `Web-Node` Security Group ID.
+### 2. Deploy Private EC2 Database Node
+1. Click **Launch Instance** again.
+2. **Name**: `private-db-node`.
+3. **AMI**: Amazon Linux 2023.
+4. **Instance Type**: `t2.micro`.
+5. **Key pair**: Select the **same** key pair used above.
+6. **Network settings**:
+   - **VPC**: `my-bifurcated-vpc`.
+   - **Subnet**: `private-subnet-1`.
+   - **Auto-assign public IP**: **Disable**.
+   - **Firewall (Security Groups)**: Create new. Allow SSH (Port 22) from the `public-web-node`'s security group or its private IP.
+7. Click **Launch instance**.
 
 ---
 
 ## Verification
 
-### 1. Test External Isolation
-*   Attempt to ping or SSH into the **Public IP** of `Web-Node`. It should succeed.
-*   Attempt to ping or SSH into the **Private IP** of `DB-Node` from your local machine. It should **fail** (it has no public IP or route).
+Verify the network isolation and accessibility of your setup.
 
-### 2. Test Internal Connectivity (Jump Box Pattern)
-1.  SSH into `Web-Node`.
-2.  From `Web-Node`, attempt to ping or SSH into the **Private IP** of `DB-Node`.
-3.  This should **succeed**, proving that the private node is reachable only from within the trusted network.
+### 1. Attempt Direct Access to Private Node (Should Fail)
+- Find the **Private IP address** of your `private-db-node` in the EC2 console.
+- Open your local terminal.
+- Attempt to ping or SSH directly into it:
+  ```bash
+  ssh -i "my-aws-key.pem" ec2-user@<PRIVATE_IP>
+  ```
+- **Result**: The connection will time out. The private subnet has no public IP and no direct route to the internet, confirming isolation.
+
+### 2. Access via Jump Node (Should Succeed)
+- SSH into your `public-web-node` using its **Public IP**:
+  ```bash
+  ssh -i "my-aws-key.pem" ec2-user@<PUBLIC_IP>
+  ```
+- To SSH into the private node from the jump node, you need your SSH key. You can securely copy it to the jump node, or use **SSH Agent Forwarding**.
+  *(Alternatively, create a temporary file on the jump node and paste the contents of your `.pem` key, then `chmod 400 key.pem`).*
+- From inside the `public-web-node`, SSH into the private node:
+  ```bash
+  ssh -i "my-aws-key.pem" ec2-user@<PRIVATE_IP>
+  ```
+- **Result**: You should successfully log in to the `private-db-node`. This proves that the private node is secure from the outside world but properly accessible internally via the public subnet jump node.
