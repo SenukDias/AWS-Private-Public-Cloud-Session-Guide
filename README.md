@@ -5,7 +5,7 @@
 [![AWS Architecture](https://img.shields.io/badge/AWS-Architecture-FF9900?style=flat-square&logo=amazonwebservices&logoColor=white)](#)&ensp;
 [![Cloud Networking](https://img.shields.io/badge/Cloud-Networking-232F3E?style=flat-square&logo=amazonwebservices&logoColor=white)](#)&ensp;
 
-🎯 [Overview](#-high-level-overview) &ensp; ✅ [GUI Deployment](#-gui-deployment-guide-vpc--networking) &ensp; 🚀 [CLI Deployment](#-automation-script) &ensp; 🔍 [Verification](#-verification)
+🎯 [Overview](#-high-level-overview) &ensp; 🧪 [Lab Instructions](#-lab-instructions)
 
 > **✨ Learn to master AWS networking by building a secure, bifurcated Virtual Private Cloud.**
 
@@ -24,74 +24,48 @@ A bifurcated network architecture separates infrastructure into **Public** and *
 - <img src="./images/aws-vpc-icon.png" width="20" /> **Public Subnet**: Contains resources that require direct access to the internet, such as web servers, NAT gateways, or load balancers. These subnets have a route to an Internet Gateway (IGW).
 - <img src="./images/aws-vpc-icon.png" width="20" /> **Private Subnet**: Contains backend resources that should not be directly accessible from the internet, such as databases or application servers. These subnets do not have a route to an IGW. They rely on Bastion Hosts (Jump Nodes) in the public subnet for inbound SSH access.
 
-## 💻 GUI Deployment Guide: VPC & Networking
+## 🗺️ Learning Path & Milestones
 
-Follow these steps to deploy the VPC architecture via the AWS Management Console:
+The following flowchart outlines the exact milestones you will complete during this workshop, depending on the learning path you choose.
 
-### 1. Create the VPC
-1. Navigate to the **VPC Dashboard**.
-2. Click **Create VPC** and select **VPC only**.
-3. **Name tag**: `my-bifurcated-vpc`.
-4. **IPv4 CIDR block**: `10.0.0.0/16`.
-5. Click **Create VPC**.
-
-### 2. Create Subnets
-1. Go to **Subnets** > **Create subnet**.
-2. Select your VPC: `my-bifurcated-vpc`.
-3. **Configure Public Subnet**:
-   - **Name**: `public-subnet-1` | **AZ**: Choose one (e.g., `us-east-1a`) | **CIDR**: `10.0.1.0/24`
-4. Click **Add new subnet** to configure the private subnet:
-   - **Name**: `private-subnet-1` | **AZ**: Same zone | **CIDR**: `10.0.2.0/24`
-5. Click **Create subnet**.
-
-### 3. Internet Gateway (IGW) & Routing
-1. Go to **Internet Gateways** > **Create internet gateway** (Name: `my-igw`). Attach it to `my-bifurcated-vpc`.
-2. Go to **Route Tables**. Your main route table is your **Private Route Table**.
-3. **Create Public Route Table**: Name it `public-route-table` for `my-bifurcated-vpc`.
-4. Edit routes for `public-route-table`: Add `0.0.0.0/0` -> Target `my-igw`.
-5. Edit subnet associations for `public-route-table`: Select `public-subnet-1`. *(Private subnet stays implicitly associated with the main route table).*
-
-## 🚀 Deploying EC2 Nodes
-
-1. **Deploy Public EC2 Web Node (Jump Node)**:
-   - **VPC/Subnet**: `my-bifurcated-vpc` / `public-subnet-1`.
-   - **Public IP**: Enable.
-   - **Security Group**: Allow SSH (22) and HTTP (80) from Anywhere.
-2. **Deploy Private EC2 Database Node**:
-   - **VPC/Subnet**: `my-bifurcated-vpc` / `private-subnet-1`.
-   - **Public IP**: Disable.
-   - **Security Group**: Allow SSH (22) from the `public-web-node`'s security group.
-
-## 📜 Automation Script
-Want to skip the console? You can automate this entire setup using our AWS CLI Bash script.
-
-Run the script locally:
-```bash
-chmod +x deploy-vpc.sh
-./deploy-vpc.sh
+```mermaid
+graph TD
+    Start([🏁 Start Workshop]) --> Choose{Choose Your Path}
+    
+    Choose -->|Beginner| GUI[💻 GUI Method<br>AWS Management Console]
+    Choose -->|Intermediate| CLI[🚀 CLI Method<br>Terminal & Automation]
+    
+    %% GUI Milestones
+    GUI --> G1[Milestone 1:<br>Create VPC & Subnets]
+    G1 --> G2[Milestone 2:<br>Configure Routing & IGW]
+    G2 --> G3[Milestone 3:<br>Deploy EC2 Nodes]
+    G3 --> Verify1[Milestone 4:<br>Verify Network Isolation]
+    
+    %% CLI Milestones
+    CLI --> C1[Milestone 1:<br>Install & Configure AWS CLI]
+    C1 --> C2A[Milestone 2A:<br>Run Automation Script]
+    C1 --> C2B[Milestone 2B:<br>Execute Manual Commands]
+    C2A --> Verify2[Milestone 3:<br>Verify Network Isolation]
+    C2B --> Verify2
+    
+    Verify1 --> Finish([🎉 Workshop Completed!])
+    Verify2 --> Finish
+    
+    classDef default fill:#232F3E,stroke:#FF9900,stroke-width:2px,color:#fff;
+    classDef highlight fill:#FF9900,stroke:#232F3E,stroke-width:2px,color:#232F3E;
+    class Start,Choose,Finish highlight;
 ```
 
-## 🔍 Verification
+## 🧪 Lab Instructions
 
-Verify the network isolation and accessibility of your setup.
+We have provided two different paths to complete this lab depending on your comfort level and learning goals. 
 
-### 1. Direct Access to Private Node (Should Fail)
-Attempt to ping or SSH directly into your private node using its Private IP. 
-```bash
-ssh -i "my-aws-key.pem" ec2-user@<PRIVATE_IP>
-```
-*Result: Connection times out. The private node has no route to the internet.*
+| Learning Path | Description | Link |
+|:-------------:|-------------|------|
+| **01** | 💻 **GUI Deployment (AWS Console)**<br>Best for beginners. Visual, step-by-step guide through the AWS web console. | [Start GUI Lab](./01-gui-method.md) |
+| **02** | 🚀 **CLI Deployment (Automation)**<br>Best for intermediate users. Uses AWS CLI and bash scripts to automate the deployment. | [Start CLI Lab](./02-cli-method.md) |
 
-### 2. Access via Jump Node (Should Succeed)
-SSH into your public jump node:
-```bash
-ssh -i "my-aws-key.pem" ec2-user@<PUBLIC_IP>
-```
-From inside the public node, SSH into the private node using the same key (using SCP or SSH Agent Forwarding):
-```bash
-ssh -i "my-aws-key.pem" ec2-user@<PRIVATE_IP>
-```
-*Result: You successfully log in, proving internal accessibility within the VPC.*
+*(Note: Both paths achieve the same final architecture. The CLI path includes a ready-to-run automation script: `deploy-vpc.sh`)*
 
 ---
 
