@@ -17,18 +17,18 @@ Think of this as your foundational step toward building secure, production-ready
 graph TD
     User((👨‍💻 User))
     
-    subgraph "AWS Cloud Region"
+    subgraph AWS_Region["AWS Cloud Region"]
         IGW[🌐 Internet Gateway]
         
-        subgraph "VPC (10.0.0.0/16)"
+        subgraph VPC["VPC (10.0.0.0/16)"]
             direction TB
             
-            subgraph "Public Subnet (10.0.1.0/24)"
+            subgraph PublicSubnet["Public Subnet (10.0.1.0/24)"]
                 Web[💻 Public Web Node<br>Jump Host]
                 RT_Pub[🗺️ Public Route Table<br>0.0.0.0/0 ➡️ IGW]
             end
             
-            subgraph "Private Subnet (10.0.2.0/24)"
+            subgraph PrivateSubnet["Private Subnet (10.0.2.0/24)"]
                 DB[🗄️ Private DB Node]
                 RT_Priv[🗺️ Main Route Table<br>Local Routing Only]
             end
@@ -47,9 +47,9 @@ graph TD
     classDef vpcBorder fill:none,stroke:#ff9900,stroke-width:3px,stroke-dasharray: 5 5
     classDef awsNode fill:#ff9900,stroke:#232f3e,stroke-width:2px,color:#fff
     
-    class "Public Subnet (10.0.1.0/24)" pubSubnet
-    class "Private Subnet (10.0.2.0/24)" privSubnet
-    class "VPC (10.0.0.0/16)" vpcBorder
+    class PublicSubnet pubSubnet
+    class PrivateSubnet privSubnet
+    class VPC vpcBorder
     class IGW,Web,DB awsNode
 ```
 
