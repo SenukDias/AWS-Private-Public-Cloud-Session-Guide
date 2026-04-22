@@ -64,13 +64,31 @@ aws configure
 
 ---
 
-## 🚀 Proceed to Deployment
+## 🚀 Choose Your Deployment Path
 
-Now that your setup is complete, choose your preferred deployment method to continue:
+Now that your setup is complete, you have two options to continue your training. Choose the method that best aligns with your learning goals.
 
-[![GUI Method](https://img.shields.io/badge/02_GUI_Method-AWS_Console-232F3E?style=for-the-badge&logo=amazonwebservices&logoColor=white)](./02-gui-method.md)
+### 💻 Option A: GUI Method (AWS Management Console)
+Best for beginners who want a visual, step-by-step understanding of AWS networking concepts. 
 
-[![CLI Method](https://img.shields.io/badge/03_CLI_Method-Terminal-232F3E?style=for-the-badge&logo=gnu-bash&logoColor=white)](./03-cli-method.md)
+**Milestones you will complete:**
+1. **Milestone 1:** Manually construct the VPC and slice it into Public and Private Subnets.
+2. **Milestone 2:** Attach an Internet Gateway and map traffic using Route Tables.
+3. **Milestone 3:** Deploy EC2 Nodes and test your network isolation and security rules.
+
+[![Start GUI Method](https://img.shields.io/badge/Start_Option_A-GUI_Method-232F3E?style=for-the-badge&logo=amazonwebservices&logoColor=white)](./02a-gui-milestone1-vpc-subnets.md)
+
+---
+
+### 🚀 Option B: CLI Method (Terminal & Automation)
+Best for intermediate users focused on terminal commands and automation.
+
+**Milestones you will complete:**
+1. **Milestone 1:** Provision the core VPC network boundary using AWS CLI commands.
+2. **Milestone 2:** Programmatically attach an Internet Gateway and configure routing tables.
+3. **Milestone 3:** Execute a complete, one-click `deploy-vpc.sh` bash automation script.
+
+[![Start CLI Method](https://img.shields.io/badge/Start_Option_B-CLI_Method-232F3E?style=for-the-badge&logo=gnu-bash&logoColor=white)](./03a-cli-milestone1-vpc-subnets.md)
 
 ---
 [⬅️ Back to Main README](./README.md)
