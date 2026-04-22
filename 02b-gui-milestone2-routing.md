@@ -10,7 +10,7 @@ In this milestone, we will attach an Internet Gateway (IGW) to our VPC and confi
 
 The public subnet needs a way to route traffic to the internet.
 
-1. Go to **Internet Gateways** > **Create internet gateway**.
+1. Go to [**Internet Gateways**](https://console.aws.amazon.com/vpc/home#igws:) > **Create internet gateway**.
 2. **Name tag**: `my-igw`.
 3. Click **Create internet gateway**.
 4. The IGW will be created in a `Detached` state. Select it, click **Actions** > **Attach to VPC**.
@@ -21,7 +21,7 @@ The public subnet needs a way to route traffic to the internet.
 By default, your VPC comes with a "main" route table. This table only routes traffic locally within the VPC. We will leave this as our **Private Route Table**.
 
 1. **Create the Public Route Table**:
-   - Go to **Route Tables** > **Create route table**.
+   - Go to [**Route Tables**](https://console.aws.amazon.com/vpc/home#RouteTables:) > **Create route table**.
    - **Name**: `public-route-table`.
    - **VPC**: `my-bifurcated-vpc`.
    - Click **Create route table**.

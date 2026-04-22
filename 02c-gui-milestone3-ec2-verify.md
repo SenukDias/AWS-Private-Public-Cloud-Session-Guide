@@ -11,7 +11,7 @@ In this final milestone, we will deploy two EC2 instances—one in the Public Su
 Now we will test our networking by deploying two servers.
 
 ### Deploy the Public EC2 Web Node (Jump Node)
-1. Go to the **EC2 Dashboard** > **Launch Instance**.
+1. Go to the [**EC2 Dashboard**](https://console.aws.amazon.com/ec2/) > **Launch Instance**.
 2. **Name**: `public-web-node`.
 3. **AMI**: Amazon Linux 2023.
 4. **Instance Type**: `t2.micro` (Free tier eligible).

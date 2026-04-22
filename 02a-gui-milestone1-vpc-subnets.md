@@ -8,7 +8,7 @@ In this first milestone, we will manually construct the core network boundary (V
 
 ## 1. Create the VPC
 
-1. Log into your AWS account and navigate to the **VPC Dashboard**.
+1. Log into your AWS account and navigate to the [**VPC Dashboard**](https://console.aws.amazon.com/vpc/).
 2. Click the **Create VPC** button.
 3. Select the **VPC only** option (this allows us to configure everything manually for learning purposes).
 4. **Name tag**: `my-bifurcated-vpc`
@@ -19,7 +19,7 @@ In this first milestone, we will manually construct the core network boundary (V
 
 Next, we will slice our VPC CIDR block into two smaller networks (subnets).
 
-1. On the left sidebar, go to **Subnets** > **Create subnet**.
+1. On the left sidebar, go to [**Subnets**](https://console.aws.amazon.com/vpc/home#subnets:) > **Create subnet**.
 2. **VPC ID**: Select the VPC you just created (`my-bifurcated-vpc`).
 3. **Configure Public Subnet**:
    - **Name**: `public-subnet-1`
