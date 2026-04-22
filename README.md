@@ -1,5 +1,3 @@
----
-
 ![AWS Private/Public Cloud Session](./images/aws-session-banner.png)
 
 [![AWS Architecture](https://img.shields.io/badge/AWS-Architecture-FF9900?style=flat-square&logo=amazonwebservices&logoColor=white)](#)&ensp;
@@ -92,14 +90,16 @@ graph TD
     class Start,Choose,Finish highlight;
 ```
 
-## 🧪 Lab Instructions
+## 🚀 Start the Lab
 
-We have provided two different paths to complete this lab depending on your comfort level and learning goals. 
+[![Start Lab](https://img.shields.io/badge/Start_Lab-01_Introduction-FF9900?style=for-the-badge&logo=amazonwebservices&logoColor=white)](./01-introduction.md)
 
-| Learning Path | Description | Link |
-|:-------------:|-------------|------|
-| **01** | 💻 **GUI Deployment (AWS Console)**<br>Best for beginners. Visual, step-by-step guide through the AWS web console. | [Start GUI Lab](./01-gui-method.md) |
-| **02** | 🚀 **CLI Deployment (Automation)**<br>Best for intermediate users. Uses AWS CLI and bash scripts to automate the deployment. | [Start CLI Lab](./02-cli-method.md) |
+### 🛤️ Choose Your Path
+
+After completing the introduction and setup, choose your preferred method to deploy the infrastructure:
+
+[![GUI Method](https://img.shields.io/badge/02_GUI_Method-AWS_Console-232F3E?style=for-the-badge&logo=amazonwebservices&logoColor=white)](./02-gui-method.md)
+[![CLI Method](https://img.shields.io/badge/03_CLI_Method-Terminal-232F3E?style=for-the-badge&logo=gnu-bash&logoColor=white)](./03-cli-method.md)
 
 *(Note: Both paths achieve the same final architecture. The CLI path includes a ready-to-run automation script: `deploy-vpc.sh`)*
 
