@@ -16,13 +16,40 @@ VPC_NAME="my-bifurcated-vpc-cli"
 VPC_CIDR="10.0.0.0/16"
 PUBLIC_SUBNET_CIDR="10.0.1.0/24"
 PRIVATE_SUBNET_CIDR="10.0.2.0/24"
-REGION="us-east-1"
+REGION=${AWS_DEFAULT_REGION:-"us-east-1"}
+
+# ==========================================
+# 1. Select Lowest Latency Region
+# ==========================================
+echo "Testing latency to common AWS regions to find the best deployment target..."
+echo "(You can skip this in the future by setting AWS_DEFAULT_REGION)"
+
+if [ -z "$AWS_DEFAULT_REGION" ]; then
+    BEST_REGION="us-east-1"
+    LOWEST_LATENCY=999
+
+    for r in us-east-1 us-west-2 eu-west-1 ap-south-1 ap-southeast-1; do
+        echo -n "Pinging $r... "
+        LATENCY=$(curl -o /dev/null -s -w "%{time_total}\n" https://dynamodb.$r.amazonaws.com || echo "999")
+        echo "${LATENCY}s"
+        if awk "BEGIN {exit !($LATENCY < $LOWEST_LATENCY)}"; then
+            LOWEST_LATENCY=$LATENCY
+            BEST_REGION=$r
+        fi
+    done
+
+    echo "✅ Selected $BEST_REGION as the deployment region based on lowest latency (${LOWEST_LATENCY}s)."
+    REGION=$BEST_REGION
+else
+    echo "✅ Using pre-configured region: $REGION"
+fi
+
 AZ="${REGION}a"
 
 echo "Starting deployment of VPC architecture in $REGION..."
 
 # ==========================================
-# 1. Create VPC
+# 2. Create VPC
 # ==========================================
 echo "Creating VPC ($VPC_CIDR)..."
 VPC_ID=$(aws ec2 create-vpc --cidr-block $VPC_CIDR --region $REGION --query 'Vpc.VpcId' --output text)
@@ -35,7 +62,7 @@ aws ec2 modify-vpc-attribute --vpc-id $VPC_ID --enable-dns-hostnames "{\"Value\"
 echo "✅ VPC created with ID: $VPC_ID"
 
 # ==========================================
-# 2. Create Public Subnet
+# 3. Create Public Subnet
 # ==========================================
 echo "Creating Public Subnet ($PUBLIC_SUBNET_CIDR)..."
 PUB_SUBNET_ID=$(aws ec2 create-subnet --vpc-id $VPC_ID --cidr-block $PUBLIC_SUBNET_CIDR --availability-zone $AZ --region $REGION --query 'Subnet.SubnetId' --output text)
@@ -48,7 +75,7 @@ aws ec2 modify-subnet-attribute --subnet-id $PUB_SUBNET_ID --map-public-ip-on-la
 echo "✅ Public Subnet created with ID: $PUB_SUBNET_ID"
 
 # ==========================================
-# 3. Create Private Subnet
+# 4. Create Private Subnet
 # ==========================================
 echo "Creating Private Subnet ($PRIVATE_SUBNET_CIDR)..."
 PRIV_SUBNET_ID=$(aws ec2 create-subnet --vpc-id $VPC_ID --cidr-block $PRIVATE_SUBNET_CIDR --availability-zone $AZ --region $REGION --query 'Subnet.SubnetId' --output text)
@@ -58,7 +85,7 @@ aws ec2 create-tags --resources $PRIV_SUBNET_ID --tags Key=Name,Value="$VPC_NAME
 echo "✅ Private Subnet created with ID: $PRIV_SUBNET_ID"
 
 # ==========================================
-# 4. Create and Attach Internet Gateway
+# 5. Create and Attach Internet Gateway
 # ==========================================
 echo "Creating Internet Gateway..."
 IGW_ID=$(aws ec2 create-internet-gateway --region $REGION --query 'InternetGateway.InternetGatewayId' --output text)
@@ -72,7 +99,7 @@ aws ec2 attach-internet-gateway --vpc-id $VPC_ID --internet-gateway-id $IGW_ID -
 echo "✅ Internet Gateway created and attached. ID: $IGW_ID"
 
 # ==========================================
-# 5. Configure Route Tables
+# 6. Configure Route Tables
 # ==========================================
 echo "Configuring Route Tables..."
 

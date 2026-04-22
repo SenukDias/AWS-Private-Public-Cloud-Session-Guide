@@ -4,7 +4,27 @@ This guide walks you through deploying the bifurcated VPC architecture step-by-s
 
 ---
 
-## 1. Create the VPC
+## 🛠️ Step 0: Create an AWS Account (Prerequisite)
+
+Before you begin, you need an active AWS account.
+1. Go to the [AWS Portal](https://aws.amazon.com/) and click **Create a Free Account**.
+2. Follow the instructions to enter your email and choose a secure password.
+3. Provide your contact and billing information. *(Note: A valid credit/debit card is required to verify your identity, but you will not be charged if you strictly follow Free Tier limits).*
+4. Verify your phone number and select the **Basic Support - Free** plan.
+5. Wait for the activation email. Once activated, log into the [AWS Management Console](https://console.aws.amazon.com/) to begin.
+
+---
+
+## 1. Select the Lowest Latency Region
+
+Before creating any resources, it's best practice to choose the AWS region closest to you or your users to minimize latency.
+
+1. Open your web browser and go to [awsspeedtest.com](https://awsspeedtest.com/) (or [cloudping.info](https://www.cloudping.info/)).
+2. Run the ping test to find the region with the lowest latency (measured in milliseconds).
+3. Once you identify the best region (e.g., `us-east-1`, `ap-south-1`, etc.), go back to the AWS Management Console.
+4. In the top right corner of the AWS Console, click the **Region** dropdown and select your chosen region.
+
+## 2. Create the VPC
 
 1. Log into your AWS account and navigate to the **VPC Dashboard**.
 2. Click the **Create VPC** button.
@@ -13,7 +33,7 @@ This guide walks you through deploying the bifurcated VPC architecture step-by-s
 5. **IPv4 CIDR block**: `10.0.0.0/16`
 6. Leave the rest as default and click **Create VPC**.
 
-## 2. Create Subnets
+## 3. Create Subnets
 
 Next, we will slice our VPC CIDR block into two smaller networks (subnets).
 
@@ -29,7 +49,7 @@ Next, we will slice our VPC CIDR block into two smaller networks (subnets).
    - **IPv4 CIDR block**: `10.0.2.0/24`
 5. Click **Create subnet**.
 
-## 3. Create and Attach Internet Gateway (IGW)
+## 4. Create and Attach Internet Gateway (IGW)
 
 The public subnet needs a way to route traffic to the internet.
 
@@ -39,7 +59,7 @@ The public subnet needs a way to route traffic to the internet.
 4. The IGW will be created in a `Detached` state. Select it, click **Actions** > **Attach to VPC**.
 5. Select `my-bifurcated-vpc` and click **Attach internet gateway**.
 
-## 4. Configure Route Tables
+## 5. Configure Route Tables
 
 By default, your VPC comes with a "main" route table. This table only routes traffic locally within the VPC. We will leave this as our **Private Route Table**.
 
@@ -61,7 +81,7 @@ By default, your VPC comes with a "main" route table. This table only routes tra
    - Select `public-subnet-1`, and save.
    *(Note: `private-subnet-1` remains implicitly associated with the main/private route table, which has no internet route).*
 
-## 5. Deploy EC2 Instances (Nodes)
+## 6. Deploy EC2 Instances (Nodes)
 
 Now we will test our networking by deploying two servers.
 
@@ -91,7 +111,7 @@ Now we will test our networking by deploying two servers.
    - **Security Group**: Create new. Allow SSH (Port 22) but restrict the source to the `public-web-node`'s security group or its private IP.
 7. Click **Launch instance**.
 
-## 6. Verification
+## 7. Verification
 
 Now, verify the network isolation:
 

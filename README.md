@@ -15,9 +15,45 @@ Think of this as your foundational step toward building secure, production-ready
 
 ## 🏗️ High-Level Overview
 
-<picture>
-  <img src="./images/vpc-architecture.png" alt="AWS VPC Architecture Diagram" width="100%" />
-</picture>
+```mermaid
+graph TD
+    User((👨‍💻 User))
+    
+    subgraph "AWS Cloud Region"
+        IGW[🌐 Internet Gateway]
+        
+        subgraph "VPC (10.0.0.0/16)"
+            direction TB
+            
+            subgraph "Public Subnet (10.0.1.0/24)"
+                Web[💻 Public Web Node<br>Jump Host]
+                RT_Pub[🗺️ Public Route Table<br>0.0.0.0/0 ➡️ IGW]
+            end
+            
+            subgraph "Private Subnet (10.0.2.0/24)"
+                DB[🗄️ Private DB Node]
+                RT_Priv[🗺️ Main Route Table<br>Local Routing Only]
+            end
+        end
+    end
+
+    User -->|Internet Traffic| IGW
+    IGW <--> RT_Pub
+    RT_Pub -.-> Web
+    
+    Web ===>|SSH via Jump Node| DB
+    RT_Priv -.-> DB
+
+    classDef pubSubnet fill:#e6f3ff,stroke:#0077b6,stroke-width:2px,color:#03045e
+    classDef privSubnet fill:#fde2e4,stroke:#c1121f,stroke-width:2px,color:#780000
+    classDef vpcBorder fill:none,stroke:#ff9900,stroke-width:3px,stroke-dasharray: 5 5
+    classDef awsNode fill:#ff9900,stroke:#232f3e,stroke-width:2px,color:#fff
+    
+    class "Public Subnet (10.0.1.0/24)" pubSubnet
+    class "Private Subnet (10.0.2.0/24)" privSubnet
+    class "VPC (10.0.0.0/16)" vpcBorder
+    class IGW,Web,DB awsNode
+```
 
 A bifurcated network architecture separates infrastructure into **Public** and **Private** subnets to enhance security. 
 
