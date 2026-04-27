@@ -16,7 +16,7 @@ Before creating any resources, it's best practice to choose the AWS region close
 
 > 🎥 **Screen Recording / Visuals**:
 
-https://github.com/SenukDias/AWS-Private-Public-Cloud-Session-Guide/raw/main/assets/recordings/1-Test-the-Latency.mp4
+![Latency Test](./assets/recordings/1-Test-the-Latency.gif)
 
 ---
 
