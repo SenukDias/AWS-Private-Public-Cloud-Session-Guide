@@ -30,7 +30,9 @@ Before you begin, you need an active AWS account.
 4. Verify your phone number and select the **Basic Support - Free** plan.
 5. Wait for the activation email. Once activated, log into the [AWS Management Console](https://console.aws.amazon.com/) to begin.
 
-> 🎥 **Screen Recording / Visuals**: *(Insert your screen recording or GIF here for this step: `![AWS Account](../assets/recordings/aws-account.gif)`)*
+> 🎥 **Screen Recording / Visuals**:
+
+![AWS Account Sign Up](assets/recordings/2-Sign-Up-Account.gif)
 
 ---
 
