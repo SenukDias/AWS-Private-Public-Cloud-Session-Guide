@@ -14,7 +14,7 @@ OUTPUT_FILE="${2:-${INPUT_FILE%.*}.gif}"
 echo "🔄 Converting '$INPUT_FILE' to high-quality GIF -> '$OUTPUT_FILE'..."
 
 # The magic ffmpeg command with custom palette generation
-ffmpeg -y -i "$INPUT_FILE" -vf "fps=15,scale=1080:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" -loop 0 "$OUTPUT_FILE"
+ffmpeg -y -i "$INPUT_FILE" -vf "fps=10,scale=800:-1:flags=lanczos,split[s0][s1];[s0]palettegen=stats_mode=diff[p];[s1][p]paletteuse=dither=bayer:bayer_scale=5:diff_mode=rectangle" -loop 0 "$OUTPUT_FILE"
 
 if [ $? -eq 0 ]; then
   echo "✅ Success! Saved as $OUTPUT_FILE"
