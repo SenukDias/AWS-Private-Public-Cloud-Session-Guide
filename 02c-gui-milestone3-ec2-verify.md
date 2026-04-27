@@ -23,6 +23,8 @@ Now we will test our networking by deploying two servers.
    - **Security Group**: Create new. Allow SSH (Port 22) and HTTP (Port 80) from Anywhere (0.0.0.0/0).
 7. Click **Launch instance**.
 
+> 🎥 **Screen Recording / Visuals**: *(Insert your screen recording or GIF here for this step: `![Deploy Public Node](./assets/recordings/deploy-public-node.gif)`)*
+
 ### Deploy the Private EC2 Database Node
 1. Click **Launch Instance** again.
 2. **Name**: `private-db-node`.
@@ -35,6 +37,8 @@ Now we will test our networking by deploying two servers.
    - **Auto-assign public IP**: **Disable** (Crucial for isolation).
    - **Security Group**: Create new. Allow SSH (Port 22) but restrict the source to the `public-web-node`'s security group or its private IP.
 7. Click **Launch instance**.
+
+> 🎥 **Screen Recording / Visuals**: *(Insert your screen recording or GIF here for this step: `![Deploy Private Node](./assets/recordings/deploy-private-node.gif)`)*
 
 ## 2. Verification
 
@@ -57,6 +61,10 @@ Now, verify the network isolation:
    ssh -i "my-aws-key.pem" ec2-user@<PRIVATE_IP>
    ```
    *Result*: Success! You have connected to the private subnet through the public jump node.
+
+> 🎥 **Screen Recording / Visuals**: *(Insert your screen recording or GIF here for this step: `![Verification](./assets/recordings/verification.gif)`)*
+
+---
 
 ---
 

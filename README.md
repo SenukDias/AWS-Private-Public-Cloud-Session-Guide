@@ -11,6 +11,12 @@ This guide walks you through deploying an AWS VPC architecture from scratch. You
 
 Think of this as your foundational step toward building secure, production-ready cloud environments.
 
+## 🎥 Lab Screen Recordings & Visuals
+
+As you progress through the lab, you are encouraged to document your learning! We have created a dedicated space for you to add small video clips, GIFs, and screen recordings of your deployment process. 
+- Save your media to the `assets/recordings/` folder.
+- Embed them in your milestone markdown files using this format: `![Description](./assets/recordings/your-file.gif)`.
+
 ## 🏗️ High-Level Overview
 
 ```mermaid

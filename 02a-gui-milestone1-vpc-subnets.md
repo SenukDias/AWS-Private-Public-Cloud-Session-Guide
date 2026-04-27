@@ -15,6 +15,8 @@ In this first milestone, we will manually construct the core network boundary (V
 5. **IPv4 CIDR block**: `10.0.0.0/16`
 6. Leave the rest as default and click **Create VPC**.
 
+> 🎥 **Screen Recording / Visuals**: *(Insert your screen recording or GIF here for this step: `![Create VPC](./assets/recordings/create-vpc.gif)`)*
+
 ## 2. Create Subnets
 
 Next, we will slice our VPC CIDR block into two smaller networks (subnets).
@@ -30,6 +32,10 @@ Next, we will slice our VPC CIDR block into two smaller networks (subnets).
    - **Availability Zone**: Choose the same zone (e.g., `us-east-1a`)
    - **IPv4 CIDR block**: `10.0.2.0/24`
 5. Click **Create subnet**.
+
+> 🎥 **Screen Recording / Visuals**: *(Insert your screen recording or GIF here for this step: `![Create Subnets](./assets/recordings/create-subnets.gif)`)*
+
+---
 
 ---
 

@@ -16,6 +16,8 @@ The public subnet needs a way to route traffic to the internet.
 4. The IGW will be created in a `Detached` state. Select it, click **Actions** > **Attach to VPC**.
 5. Select `my-bifurcated-vpc` and click **Attach internet gateway**.
 
+> 🎥 **Screen Recording / Visuals**: *(Insert your screen recording or GIF here for this step: `![Create IGW](./assets/recordings/create-igw.gif)`)*
+
 ## 2. Configure Route Tables
 
 By default, your VPC comes with a "main" route table. This table only routes traffic locally within the VPC. We will leave this as our **Private Route Table**.
@@ -37,6 +39,10 @@ By default, your VPC comes with a "main" route table. This table only routes tra
    - Click **Edit subnet associations**.
    - Select `public-subnet-1`, and save.
    *(Note: `private-subnet-1` remains implicitly associated with the main/private route table, which has no internet route).*
+
+> 🎥 **Screen Recording / Visuals**: *(Insert your screen recording or GIF here for this step: `![Configure Routes](./assets/recordings/configure-routes.gif)`)*
+
+---
 
 ---
 
